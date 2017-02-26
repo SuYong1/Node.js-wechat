@@ -130,6 +130,98 @@ exports.reply= function* (next) {
             })
             this.body=news
         }
+        else if (content==='11') {
+            var counts=yield wechatApi.countMaterial()
+            console.log(JSON.stringify(counts))
+
+            var results=yield[
+            wechatApi.batchMaterial({
+                type:'image',
+                offset:0,
+                count:10
+            }),
+            wechatApi.batchMaterial({
+                type:'video',
+                offset:0,
+                count:10
+            }),
+            wechatApi.batchMaterial({
+                type:'voice',
+                offset:0,
+                count:10
+            }),
+            wechatApi.batchMaterial({
+                type:'news',
+                offset:0,
+                count:10
+            })
+            ]
+            console.log(JSON.stringify(results))
+            this.body=JSON.stringify(counts)
+        }
+        else if (content==='12') {
+            var group=yield wechatApi.createGroup('ppp')
+            console.log('新分组wechat')
+            console.log(group)
+
+            var groups=yield wechatApi.fetchGroups()
+            console.log('加入wechat后的分组列表')
+            console.log(groups)
+
+            var group2=yield wechatApi.checkGroup(message.FromUserName)
+            console.log('查看我的分组')
+            console.log(group2)
+
+            var group3=yield wechatApi.moveGroup(message.FromUserName,100)
+            console.log('移动分组')
+            console.log(group3)
+
+            var group4=yield wechatApi.fetchGroups()
+            console.log('移动到test后的分组列表')
+            console.log(group4)
+
+            var group5=yield wechatApi.moveGroup([message.FromUserName],107)
+            console.log('批量移动分组')
+            console.log(group5)
+
+            var group6=yield wechatApi.fetchGroups()
+            console.log('批量移动分组后的分组列表')
+            console.log(group6)
+
+            var group7=yield wechatApi.updateGroup(100,'suyongde')
+            console.log('更名分组')
+            console.log(group7)
+
+            var group8=yield wechatApi.fetchGroups()
+            console.log('更名分组后的分组列表')
+            console.log(group8)
+
+            var group9=yield wechatApi.deleteGroup(104)
+            console.log('删除分组')
+            console.log(group9)
+
+            var group10=yield wechatApi.fetchGroups()
+            console.log('删除分组后的分组列表')
+            console.log(group10)
+
+            this.body='分组操作完毕'
+        }
+        else if (content==='13') {
+            var user=yield wechatApi.batchFetchusers(message.FromUserName)
+            console.log(user)
+
+            var openIds=[{
+                openid:message.FromUserName
+            }]
+            var users=yield wechatApi.batchFetchusers(openIds)
+            console.log(users)
+            this.body=JSON.stringify(users)
+        }
+        else if (content==='14') {
+            var userlist=yield wechatApi.listuser()
+            console.log(userlist)
+            this.body='该微信公众号共有'+userlist.total+'人关注'
+        }
         else if (RegExp("^音乐").test(content)) {
             this.body = [{
                 title: '搜索的音乐：'+content.slice(2),
